@@ -1,0 +1,13 @@
+from pathlib import Path import shutil, zipfile
+base = Path("/mnt/data") html_path = base / "index.html" html = html_path.read_text(encoding="utf-8")
+Use simple GitHub-friendly filenames for the uploaded assets.
+shutil.copy2(base / "2880.jpg", base / "jup_foto.jpg") shutil.copy2(base / "askat_musabekov_aruuzatyim_super.kg_ (1).mp3", base / "music.mp3")
+Add the couple's photo section before the wedding details.
+photo_section = r'''   Ишен & Бактыгул  Бул кубанычтуу күндү сиздер менен бирге белгилөөгө чакырабыз!   ''' html = html.replace( '    \n      \n        Той тууралуу маалымат', photo_section + '\n    \n      \n        Той тууралуу маалымат', 1 )
+Add responsive photo styling.
+html = html.replace( '    .wish { line-height: 1.95; font-size: 17px; }', '    .couple-photo { display:block; width:min(100%, 430px); height:auto; margin:0 auto; border:5px solid #fffdf8; outline:1px solid var(--line); box-shadow:0 12px 30px rgba(91,65,29,.13); }\n    .wish { line-height: 1.95; font-size: 17px; }' )
+Add the uploaded music as the actual background music.
+html = html.replace('src="music.mp3"', 'src="music.mp3"') html = html.replace('', '')
+html_path.write_text(html, encoding="utf-8")
+zip_path = base / "Isen_Bakytgul_GitHub_site.zip" with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z: z.write(html_path, "index.html") z.write(base / "jup_foto.jpg", "jup_foto.jpg") z.write(base / "music.mp3", "music.mp3")
+print("Даяр архив:", zip_path, "өлчөмү:", zip_path.stat().st_size, "байт") print("Камтылган файлдар: index.html, jup_foto.jpg, music.mp3")
